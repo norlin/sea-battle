@@ -1,0 +1,39 @@
+{
+  "name": "mmo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "co": "^4.6.0",
+    "express": "^4.14.0",
+    "sat": "^0.5.0",
+    "simple-quadtree": "^0.1.3",
+    "socket.io": "^1.4.8",
+    "socket.io-client": "^1.4.8"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-strict-mode": "^6.11.3",
+    "babel-preset-es2015": "^6.9.0",
+    "babelify": "^7.3.0",
+    "brfs": "^1.4.3",
+    "grunt": "^1.0.1",
+    "grunt-babel": "^6.0.0",
+    "grunt-browserify": "^5.0.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-less": "^1.3.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-exorcise": "^2.1.1",
+    "load-grunt-tasks": "^3.5.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "NODE_PATH=./build/ node build/index.js",
+    "profile": "NODE_PATH=./build/ node --prof build/index.js",
+    "build": "grunt build"
+  },
+  "author": "norlin",
+  "license": "WTFPL"
+}

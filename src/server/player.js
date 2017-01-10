@@ -13,9 +13,9 @@ class Player extends Element {
 		this.socket = socket;
 		this.screen = this.options.screen;
 
-		this.listen();
+		this.fields = this.options.fields;
 
-		this.hits = 0;
+		this.listen();
 
 		let data = this.dataToSend({
 			id: this.id,
@@ -79,10 +79,10 @@ class Player extends Element {
 		let offset = 50;
 
 		return {
-			left: Math.max(0, pos.x - half.x - offset),
-			right: Math.min(this.game.config.width, pos.x + half.x + offset),
-			top: Math.max(0, pos.y - half.y - offset),
-			bottom: Math.min(this.game.config.height, pos.y + half.y + offset)
+			left: pos.x - half.x - offset,
+			right: pos.x + half.x + offset,
+			top: pos.y - half.y - offset,
+			bottom: pos.y + half.y + offset
 		};
 	}
 }

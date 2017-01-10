@@ -88,6 +88,11 @@ class Game extends Entity {
 			delete this.players[id];
 		}
 
+		if (this.fields[id]) {
+			this.fields[id] = undefined;
+			delete this.fields[id];
+		}
+
 		this.objects[id] = undefined;
 		delete this.objects[id];
 
@@ -109,6 +114,8 @@ class Game extends Entity {
 			log.error('No player found with id', id);
 			return false;
 		}
+
+		player.fields.forEach(field=>this.remove(field));
 
 		this.players[id] = undefined;
 		delete this.players[id];
@@ -137,7 +144,6 @@ class Game extends Entity {
 		});
 
 		socket.emit('config', this.config);
-		socket.emit('map', this.map);
 	}
 
 	onStart(socket, data) {
@@ -193,22 +199,6 @@ class Game extends Entity {
 			currentPos = player.pos();
 		}
 
-		if (area.left < 0) {
-			area.left = this.config.width + area.left;
-		}
-
-		if (area.top < 0) {
-			area.top = this.config.height + area.top;
-		}
-
-		if (area.right > this.config.width) {
-			area.right = area.right - this.config.width;
-		}
-
-		if (area.bottom > this.config.height) {
-			area.bottom = area.bottom - this.config.height;
-		}
-
 		this.iterate((object)=>{
 			if (object.id == id || object.invisible) {
 				// skip current player
@@ -243,7 +233,7 @@ class Game extends Entity {
 				}
 				return;
 			}
-
+			/*
 			let radius = object.radius || 0;
 
 			let inArea = {
@@ -288,6 +278,7 @@ class Game extends Entity {
 					color: object.color
 				};
 			}
+			*/
 		});
 
 		return objects;
@@ -351,16 +342,81 @@ class Game extends Entity {
 		return field[0];
 	}
 
+	getField(pos) {
+		let id = Utils.buildFieldId(pos);
+		return this.fields[id];
+	}
+
 	addField() {
 		// TODO: find closest free position
-		let pos = new Vector(0, 0);
+		let pos;
+		let x = 0;
+		let y = 0;
+		let previousDirection;
 
-		let length = Object.keys(this.fields).length;
+		function setPos(point) {
+			pos = point;
+		}
 
-		if (length==1) {
-			pos = new Vector(1, 0);
-		} else if (length > 1) {
-			return;
+		if (!this.getField({x, y})) {
+			setPos({x, y});
+		} else {
+			let d = 1;
+			while (!pos) {
+				for (let i = 0; i < d + 1; i++) {
+					let point = {
+						x: x - d + i,
+						y: y - i
+					};
+
+					if (!this.getField(point)) {
+						setPos(point);
+						break;
+					}
+
+					point = {
+						x: x + d - i,
+						y: y + i
+					};
+
+					if (!this.getField(point)) {
+						setPos(point);
+						break;
+					}
+				}
+
+				if (pos) {
+					break;
+				}
+
+				for (let i = 1; i < d; i++) {
+					let point = {
+						x: x - i,
+						y: y + d - i
+					};
+
+					if (!this.getField(point)) {
+						setPos(point);
+						break;
+					}
+
+					point = {
+						x: x + d - i,
+						y: y - i
+					};
+
+					if (!this.getField(point)) {
+						setPos(point);
+						break;
+					}
+				}
+
+				if (pos) {
+					break;
+				}
+
+				d += 1;
+			}
 		}
 
 		let field = new Field(this, {pos});

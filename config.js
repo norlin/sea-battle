@@ -5,7 +5,8 @@ const config = {
 	borderColor: '#333',
 	gridColor: '#ddd',
 	host: 'localhost',
-	port: 3000
+	port: 3000,
+	fieldSize: 10,
 };
 
 export default config;

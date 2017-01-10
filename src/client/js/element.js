@@ -1,5 +1,6 @@
 import Element from 'common/element';
 import Notify from './notify';
+import Vector from 'common/vector';
 
 class ClientElement extends Element {
 	constructor(game, options) {
@@ -15,9 +16,16 @@ class ClientElement extends Element {
 	}
 
 	draw(canvas) {
-		let screenPos = this.game.toScreenCoords(this.pos());
+		let screenPos;
 
-		canvas.drawCircle(screenPos, this.radius, this.color);
+		if (this.radius) {
+			screenPos = this.game.toScreenCoords(this.pos());
+			canvas.drawCircle(screenPos, this.radius, this.color);
+		} else {
+			let area = this.area();
+			screenPos = this.game.toScreenCoords(new Vector(area.x, area.y));
+			canvas.drawRect(screenPos, new Vector(area.w, area.h), this.color);
+		}
 
 		if (this.hits) {
 			new Notify(this.game, {

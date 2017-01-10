@@ -74,12 +74,14 @@ class Canvas extends Entity {
 	drawRect(pos, size, color, stroke, strokeColor) {
 		let ctx = this.ctx;
 
-		ctx.fillStyle = color;
-		ctx.fillRect(pos.x, pos.y, size.x, size.y);
+		if (color) {
+			ctx.fillStyle = color;
+			ctx.fillRect(pos.x, pos.y, size.x, size.y);
+		}
 
 		if (stroke) {
 			ctx.lineWidth = stroke;
-			ctx.strokeStyle = strokeColor || '#000';
+			ctx.strokeStyle = strokeColor || color || '#000';
 
 			pos = pos.copy();
 			pos.add(stroke);

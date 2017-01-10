@@ -85,6 +85,10 @@ class Utils {
 	parseFieldId(id) {
 		let coords = id.match(fieldIdRx);
 
+		if (!coords) {
+			throw new Error(`Wrong id: ${id}`);
+		}
+
 		let dirX = coords[1];
 		let x = coords[2];
 		if (dirX == 'W') {
@@ -119,10 +123,10 @@ class Utils {
 			dirY = 'Z';
 		} else if (pos.y < 0) {
 			y = -1*pos.y;
-			dirY = 'W';
+			dirY = 'N';
 		} else {
 			y = pos.y;
-			dirY = 'E';
+			dirY = 'S';
 		}
 
 		return `field_${dirX}:${x}x${dirY}:${y}`;

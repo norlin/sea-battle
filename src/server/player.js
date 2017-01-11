@@ -1,11 +1,14 @@
+import Utils from 'common/utils';
 import Log from 'common/log';
 import Vector from 'common/vector';
 import Element from 'common/element';
 
 let log = new Log('Player');
 
-const SPEED_BASE = 6.25;
-const SPEED_RETURN = 20;
+const SPEED_BASE = 10;
+const RETURN_TIME = 0.5;
+
+const SIZE = 320;
 
 class Player extends Element {
 	constructor(game, socket, options) {
@@ -17,10 +20,11 @@ class Player extends Element {
 		this.screen = this.options.screen;
 
 		this.fields = this.options.fields;
+		this.hoverField();
 
 		this.listen();
 
-		let data = this.dataToSend({
+		let data = this.dataToSend(this.id, {
 			id: this.id,
 			color: this.color,
 		});
@@ -40,19 +44,19 @@ class Player extends Element {
 
 		socket.removeAllListeners('stop');
 		socket.on('stop', (point)=>{
-			let id = this.fields[0];
-			let field = this.game.fields[id];
+			let field = this.game.fields[this.baseField] || this.game.fields[this.fields[0]];
 
 			if (field) {
-				this._speed = SPEED_RETURN;
 				this.target = field.pos();
+				let dist = this.target.copy().sub(this._position).magnitude();
+				this._speed = Math.max(SPEED_BASE, (dist/RETURN_TIME)/this.game.config.fps);
 			} else {
 				this.target = this._position.copy();
 			}
 		});
 	}
 
-	dataToSend(additional) {
+	dataToSend(playerId, additional) {
 		return Object.assign({
 			x: this._position.x,
 			y: this._position.y,
@@ -63,13 +67,6 @@ class Player extends Element {
 		super.initParams();
 
 		this._speed = SPEED_BASE;
-
-		let fields = [
-		];
-
-		fields.forEach((field)=>{
-			this[field] = this.options[field];
-		});
 	}
 
 	move() {
@@ -93,7 +90,7 @@ class Player extends Element {
 		let dist = target.magnitude();
 		let delta = target.fromSelfAngle(this._speed);
 
-		let radius = this.radius;
+		let radius = this.radius||1;
 		let deltaDist = dist / (50 + radius);
 
 		if (dist < (50 + radius)) {
@@ -102,25 +99,7 @@ class Player extends Element {
 
 		this._position.add(delta);
 
-		/*let width = this.game.config.width;
-		let height = this.game.config.height;
-
-		// jump behind the edges
-		if (this._position.x <= 0) {
-			this._position.x = width-1;
-			this.target.x = width + this.target.x;
-		} else if (this._position.x >= width) {
-			this._position.x = 1;
-			this.target.x = this.target.x - width;
-		}
-
-		if (this._position.y <= 0) {
-			this._position.y = height-1;
-			this.target.y = height + this.target.y;
-		} else if (this._position.y >= height) {
-			this._position.y = 1;
-			this.target.y = this.target.y - height;
-		}*/
+		this.hoverField();
 	}
 
 	stopMovement() {
@@ -143,7 +122,7 @@ class Player extends Element {
 	}
 
 	updateClient() {
-		let data = this.dataToSend();
+		let data = this.dataToSend(this.id);
 		data.hits = this.hits;
 
 		let area = this.viewport();
@@ -166,6 +145,16 @@ class Player extends Element {
 			top: pos.y - half.y - offset,
 			bottom: pos.y + half.y + offset
 		};
+	}
+
+	hoverField() {
+		let id = Utils.posToField(this.pos(), SIZE);
+		this.hoveredField = id;
+
+		if (this.fields.indexOf(this.hoveredField)>-1) {
+		//if (this.game.fields[this.hoveredField]) {
+			this.baseField = this.hoveredField;
+		}
 	}
 }
 

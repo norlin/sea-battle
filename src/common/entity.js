@@ -19,6 +19,10 @@ class Entity extends EventEmitter {
 	getData() {
 		return {};
 	}
+
+	destroy() {
+		this.removeAllListeners();
+	}
 }
 
 export default Entity;

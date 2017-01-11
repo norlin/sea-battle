@@ -37,7 +37,13 @@ class Element extends Entity {
 		};
 	}
 
-	getData() {
+	getData(playerId) {
+		if (this.dataToSend) {
+			return this.dataToSend(playerId, {
+				color: this.color
+			});
+		}
+
 		return {
 			color: this.color
 		};

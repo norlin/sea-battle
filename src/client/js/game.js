@@ -85,8 +85,6 @@ class Game extends GameBasics {
 
 			let visible = data.visible;
 
-			log.debug('visible', visible);
-
 			this.iterate((object)=>{
 				if (object._client) {
 					// skip client-only object
@@ -138,7 +136,8 @@ class Game extends GameBasics {
 				id: object.id,
 				start: new Vector(object.x, object.y),
 				width: object.w,
-				height: object.h
+				height: object.h,
+				grid: object.data.grid
 			});
 
 			this.add(field);
@@ -153,6 +152,9 @@ class Game extends GameBasics {
 			existing._position = new Vector(object.x, object.y);
 			existing.radius = object.data.radius;
 			existing.color = object.data.color;
+			break;
+		case 'field':
+			existing.update(object.data);
 			break;
 		}
 	}
@@ -206,7 +208,35 @@ class Game extends GameBasics {
 
 	drawBorder() {}
 
-	drawGrid() {}
+	drawGrid() {
+		if (!this.area) {
+			return;
+		}
+
+		let size = this.options.gridSize || 32;
+		let step = new Vector(size, size);
+		let area = this.area;
+		let init = new Vector(area.left*size, area.top*size);
+		init = this.toScreenCoords(init);
+
+		let ctx = this.canvas.ctx;
+
+		ctx.beginPath();
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = this.config.gridColor;
+
+		for (let x = init.x; x < this.screen.x; x += step.x) {
+			ctx.moveTo(x, 0);
+			ctx.lineTo(x, this.screen.y);
+		}
+
+		for (let y = init.y; y < this.screen.y; y += step.y) {
+			ctx.moveTo(0, y);
+			ctx.lineTo(this.screen.x, y);
+		}
+
+		ctx.stroke();
+	}
 
 	onDie() {
 		this.stop();

@@ -93,6 +93,7 @@ class Game extends Entity {
 			delete this.fields[id];
 		}
 
+		this.objects[id].destroy();
 		this.objects[id] = undefined;
 		delete this.objects[id];
 
@@ -147,13 +148,15 @@ class Game extends Entity {
 	}
 
 	onStart(socket, data) {
-		if (this.players[socket.id]) {
+		let playerId = socket.id;
+
+		if (this.players[playerId]) {
 			return;
 		}
 
 		let basicPower = 1;
 
-		let fieldId = this.addField();
+		let fieldId = this.addField(playerId);
 
 		if (!fieldId) {
 			socket.emit('full');
@@ -164,11 +167,15 @@ class Game extends Entity {
 		let fieldPos = this.fields[fieldId].pos();
 
 		let player = new Player(this, socket, {
-			id: socket.id,
+			id: playerId,
 			screen: new Vector(data.screenWidth, data.screenHeight),
 			start: fieldPos,
 			fields: [fieldId],
 		});
+
+		if (playerId != player.id) {
+			throw new Error('Player id mismatch!');
+		}
 
 		this.players[player.id] = player;
 
@@ -227,7 +234,7 @@ class Game extends Entity {
 						y: pos.y,
 						w: obj.w,
 						h: obj.h,
-						data: object.getData(),
+						data: object.getData(id),
 						type: object.type
 					};
 				}
@@ -347,7 +354,7 @@ class Game extends Entity {
 		return this.fields[id];
 	}
 
-	addField() {
+	addField(playerId) {
 		// TODO: find closest free position
 		let pos;
 		let x = 0;
@@ -419,7 +426,10 @@ class Game extends Entity {
 			}
 		}
 
-		let field = new Field(this, {pos});
+		let field = new Field(this, {
+			pos: pos,
+			player: playerId
+		});
 		this.fields[field.id] = field;
 		this.add(field);
 

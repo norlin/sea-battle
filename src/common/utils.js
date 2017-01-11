@@ -28,6 +28,10 @@ class Utils {
 		return Math.min(max, Math.max(min, value));
 	}
 
+	randomBool() {
+		return this.randomDouble(0, 1) < 0.5;
+	}
+
 	randomDouble(min, max) {
 		return Math.random() * (max-min) + min;
 	}
@@ -138,6 +142,14 @@ class Utils {
 		y = y*size;
 
 		return {x, y};
+	}
+
+	posToField(pos, size) {
+		let half = size/2;
+		let x = Math.floor((pos.x+half) / size);
+		let y = Math.floor((pos.y+half) / size);
+
+		return this.buildFieldId({x, y});
 	}
 }
 

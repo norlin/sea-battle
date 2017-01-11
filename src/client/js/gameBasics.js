@@ -103,9 +103,16 @@ class GameBasics extends Entity {
 	}
 
 	onMove(event) {
-		let mouse = new Vector(event.clientX, event.clientY);
+		let {point, gamePoint} = this.getMousePoint(event);
 
-		this.direction = this.center.directionTo(mouse);
+		this.emit(`mousemove.global`, point);
+		if (this.tickTimer) {
+			this.emit(`mousemove`, point);
+		}
+
+		this.emit(`gameMousemove`, gamePoint);
+
+		this.direction = this.center.directionTo(point);
 	}
 
 	getMousePoint(event) {
@@ -194,6 +201,13 @@ class GameBasics extends Entity {
 		}
 	}
 
+	addMouseMoveListener(handler, inGame, global) {
+		let event = inGame ? 'gameMouse' : 'mouse';
+		let isGlobal = global ? '.global' : '';
+
+		this.on(`${event}move${isGlobal}`, handler);
+	}
+
 	drawGrid() {
 		let size = this.options.gridSize || 32;
 		let step = new Vector(size, size);
@@ -260,12 +274,11 @@ class GameBasics extends Entity {
 	}
 
 	toScreenCoords(vector) {
-		//debugger;
 		let point = vector.copy();
 		let view = this.viewpoint;
 		let corr = view.copy().sub(this.center);
 
-		if (corr.x+this.screen.x > this.config.width && point.x < this.screen.x && point.x < corr.x) {
+		/*if (corr.x+this.screen.x > this.config.width && point.x < this.screen.x && point.x < corr.x) {
 			point.x += this.config.width;
 		} else if (corr.x < this.screen.x && point.x > corr.x && point.x+this.screen.x > this.config.width) {
 			point.x -= this.config.width;
@@ -275,7 +288,7 @@ class GameBasics extends Entity {
 			point.y += this.config.height;
 		} else if (corr.y < this.screen.y && point.y > corr.x && point.y+this.screen.y > this.config.height) {
 			point.y -= this.config.height;
-		}
+		}*/
 
 		return point.sub(corr);
 	}

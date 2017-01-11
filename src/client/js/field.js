@@ -9,10 +9,25 @@ class ClientField extends Element {
 		super(game, options);
 
 		this.initParams();
+
+		this.type = 'field';
+
+		this.game.addMouseMoveListener((gamePoint)=>{
+			let area = this.area();
+
+			if (gamePoint.x > area.x && gamePoint.x < (area.x+area.w) &&
+				gamePoint.y > area.y && gamePoint.y < (area.y+area.h)) {
+
+				this.point = gamePoint.copy();
+			} else {
+				this.point = null;
+			}
+		}, true);
 	}
 
 	initParams() {
 		super.initParams();
+		this.update(this.options);
 
 		this.cellSize = Math.round(this.width / this.game.config.fieldSize);
 	}
@@ -27,7 +42,7 @@ class ClientField extends Element {
 		canvas.drawRect(screenPos, new Vector(area.w, area.h), false, 2, this.game.config.gridColor);
 
 		let fieldCenterScreen = this.game.toScreenCoords(new Vector(area.left, area.top));
-		canvas.drawText(fieldCenterScreen, this.id, '#000');
+		//canvas.drawText(fieldCenterScreen, this.id, '#000');
 	}
 
 	drawGrid(canvas, area) {
@@ -51,6 +66,40 @@ class ClientField extends Element {
 		}
 
 		ctx.stroke();
+
+		let size = new Vector(this.cellSize, this.cellSize).sub(2);
+		if (!this.grid) {
+			return;
+		}
+
+		this.grid.forEach((col, i)=>{
+			let x = area.x + i * this.cellSize;
+			col.forEach((item, j)=>{
+				let {type, cell} = item;
+
+				let pos = new Vector(x, area.y + j * this.cellSize);
+				let screenPos = this.game.toScreenCoords(pos).add(1);
+
+				if (this.game.debug) {
+					canvas.drawRect(screenPos, size, cell === 0 ? '#f7f7ff' : (cell == 1 ? '#fcc' : '#fec'));
+					canvas.drawText(screenPos.add(this.cellSize/2), type, '#000');
+				} else {
+					canvas.drawRect(screenPos, size, cell === 1 ? '#fcc' : (this.hovered ? '#f7f7ff' : false));
+				}
+
+				if (this.point) {
+					if ((this.point.x >= pos.x) && (this.point.x <= (pos.x+size.x)) &&
+						(this.point.y >= pos.y) && (this.point.y <= (pos.y+size.y))) {
+						canvas.drawRect(screenPos, size, cell === 1 ? '#f88' : '#ccf');
+					}
+				}
+			});
+		});
+	}
+
+	update(object) {
+		this.grid = object.grid;
+		this.hovered = object.hovered;
 	}
 
 	tick() {}

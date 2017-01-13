@@ -136,8 +136,7 @@ class Player extends Element {
 		let pos = this.pos();
 
 		let half = this.screen.copy().divBy(2);
-
-		let offset = 320;
+		let offset = SIZE;
 
 		return {
 			left: pos.x - half.x - offset,

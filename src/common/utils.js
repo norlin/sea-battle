@@ -151,6 +151,23 @@ class Utils {
 
 		return this.buildFieldId({x, y});
 	}
+
+	cellByPos(pos, size, cellSize) {
+		let half = size/2;
+		let x = Math.floor((pos.x+half) / size);
+		let y = Math.floor((pos.y+half) / size);
+
+		x = x*size - half;
+		y = y*size - half;
+
+		let cellX = pos.x - x;
+		let cellY = pos.y - y;
+
+		x = Math.floor(cellX / cellSize);
+		y = Math.floor(cellY / cellSize);
+
+		return {x, y};
+	}
 }
 
 const instance = new Utils();

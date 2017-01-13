@@ -1,3 +1,4 @@
+import Utils from 'common/utils';
 import Log from 'common/log';
 import Vector from 'common/vector';
 import Element from './element';
@@ -15,10 +16,11 @@ class ClientField extends Element {
 		this.game.addMouseMoveListener((gamePoint)=>{
 			let area = this.area();
 
-			if (gamePoint.x > area.x && gamePoint.x < (area.x+area.w) &&
-				gamePoint.y > area.y && gamePoint.y < (area.y+area.h)) {
+			let hovered = Utils.posToField(gamePoint, this.width);
 
+			if (hovered == this.id) {
 				this.point = gamePoint.copy();
+				this.cell = Utils.cellByPos(gamePoint, this.width, this.cellSize);
 			} else {
 				this.point = null;
 			}
@@ -87,11 +89,8 @@ class ClientField extends Element {
 					canvas.drawRect(screenPos, size, cell === 1 ? '#fcc' : (this.hovered ? '#f7f7ff' : false));
 				}
 
-				if (this.point) {
-					if ((this.point.x >= pos.x) && (this.point.x <= (pos.x+size.x)) &&
-						(this.point.y >= pos.y) && (this.point.y <= (pos.y+size.y))) {
-						canvas.drawRect(screenPos, size, cell === 1 ? '#f88' : '#ccf');
-					}
+				if (this.point && this.cell && this.cell.x == i && this.cell.y == j) {
+					canvas.drawRect(screenPos, size, cell === 1 ? '#f88' : '#ccf');
 				}
 			});
 		});

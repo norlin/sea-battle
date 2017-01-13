@@ -32,6 +32,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_PATH=./build/ node build/index.js",
     "profile": "NODE_PATH=./build/ node --prof build/index.js",
+    "debug": "NODE_PATH=./build/ node --inspect build/index.js",
     "build": "grunt build"
   },
   "author": "norlin",

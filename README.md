@@ -1,5 +1,7 @@
 # sea-battle
 
-```npm install
+```bash
+npm install
 grunt build
-npm start```
+npm start
+```

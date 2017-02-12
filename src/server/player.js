@@ -24,6 +24,8 @@ class Player extends Element {
 
 		this.listen();
 
+		//this.ping();
+
 		let data = this.dataToSend(this.id, {
 			id: this.id,
 			color: this.color,
@@ -128,6 +130,9 @@ class Player extends Element {
 		let area = this.viewport();
 		data.area = area;
 		data.visible = this.game.getVisibleObjects(this.id, area);
+
+		//const test = JSON.stringify(data);
+		//log.debug(`Update data size: ${test.length}`);
 
 		this.socket.emit('update', data);
 	}

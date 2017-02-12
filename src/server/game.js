@@ -161,7 +161,7 @@ class Game extends Entity {
 		if (!fieldId) {
 			socket.emit('full');
 			socket.disconnect();
-			return;
+			throw new Error(`Can't make a new field!`);
 		}
 
 		let fieldPos = this.fields[fieldId].pos();

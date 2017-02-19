@@ -7,6 +7,11 @@ const config = {
 	host: 'localhost',
 	port: 3000,
 	fieldSize: 10,
+	monitor: {
+		host: 'localhost',
+		port: 3001,
+		limit: 1000
+	}
 };
 
 export default config;

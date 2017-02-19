@@ -31,6 +31,7 @@ grunt.initConfig({
 					'src/common',
 					'src/server',
 					'./index.js',
+					'./monitor.js',
 					'./config.js'
 				]
 			}
@@ -54,6 +55,14 @@ grunt.initConfig({
 						'src/client/js/main.js',
 					],
 					dest: 'build/client/js/main.js'
+				},
+				{
+					nonull: true,
+					cwd: 'src/',
+					src: [
+						'src/client/js/monitor/monitor.js',
+					],
+					dest: 'build/client/js/monitor.js'
 				},
 			]
 		},
@@ -79,6 +88,7 @@ grunt.initConfig({
 					cwd: './',
 					src: [
 						'index.js',
+						'monitor.js',
 						'config.js'
 					],
 					dest: 'build/'
@@ -93,6 +103,7 @@ grunt.initConfig({
 			},
 			files: {
 				'build/client/js/main.map': ['build/client/js/main.js'],
+				'build/client/js/monitor.map': ['build/client/js/monitor.js'],
 			}
 		}
 	},
@@ -110,6 +121,17 @@ grunt.initConfig({
 					dest: 'build/'
 				}
 			]
+		},
+		metrics: {
+			files: [
+				{
+					nonull: true,
+					expand: true,
+					cwd: 'node_modules/metrics-graphics/dist/',
+					src: ['*.css'],
+					dest: 'build/client/css/'
+				}
+			]
 		}
 	},
 	less: {
@@ -122,6 +144,11 @@ grunt.initConfig({
 					nonull: true,
 					dest: 'build/client/css/main.css',
 					src: ['src/client/css/*.less']
+				},
+				{
+					nonull: true,
+					dest: 'build/client/css/monitor.css',
+					src: ['src/client/css/monitor/*.less']
 				}
 			]
 		}
@@ -146,6 +173,7 @@ grunt.initConfig({
 				'src/server/**/*.js',
 				'src/common/**/*.js',
 				'./index.js',
+				'./monitor.js',
 				'./config.js'
 			],
 			tasks: [

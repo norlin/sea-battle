@@ -7,7 +7,10 @@ class Client {
 	constructor(options) {
 		this.options = Object.assign({}, options);
 
-		this.socket = io({query:'type=player'});
+		this.socket = io({
+			reconnection: false,
+			query: 'type=player'
+		});
 
 		this.on = this.socket.on.bind(this.socket);
 		this.emit = this.socket.emit.bind(this.socket);

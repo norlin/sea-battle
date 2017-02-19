@@ -7,10 +7,13 @@ import Field from './field';
 import QuadTree from 'simple-quadtree';
 
 let log = new Log('Game');
+let metrics = new Log('Metrics');
 
 class Game extends Entity {
-	constructor(options, io) {
+	constructor(options, io, monitor) {
 		super(null, options);
+
+		this.monitor = monitor;
 
 		this.config = this.options;
 		this.sockets = {};
@@ -28,6 +31,10 @@ class Game extends Entity {
 
 		this.addListeners(io);
 		this.start();
+	}
+
+	metric(name, value) {
+		this.monitor.emit('data', {name, value});
 	}
 
 	makeMap() {
@@ -187,6 +194,7 @@ class Game extends Entity {
 			return;
 		}
 
+		this.ts_interval = process.hrtime();
 		this.tickTimer = setInterval(()=>this.tick(), 1000 / this.config.fps);
 	}
 
@@ -297,7 +305,14 @@ class Game extends Entity {
 		}
 	}
 
+	ts_parse(hrtime) {
+		return hrtime.join(',');
+	}
+
 	tick() {
+		this.metric('interval', this.ts_parse(process.hrtime(this.ts_interval)));
+
+		let ts_tick = process.hrtime();
 		this.tree.clear();
 
 		// move objects
@@ -327,6 +342,10 @@ class Game extends Entity {
 				object.updateClient();
 			}
 		});
+
+		this.metric('tick', this.ts_parse(process.hrtime(ts_tick)));
+
+		this.ts_interval = process.hrtime();
 	}
 
 	getFieldByPos(pos) {

@@ -1,5 +1,6 @@
 import express from 'express';
 import socket from 'socket.io';
+import { connect as io_client } from 'socket.io-client';
 import * as HTTP from 'http';
 import Log from 'common/log';
 import Game from './game';
@@ -28,7 +29,16 @@ class Server {
 	}
 
 	createGame(io) {
-		let game = new Game(this.config, io);
+		let host = `http://${this.config.monitor.host}:${this.config.monitor.port}`;
+
+		log.debug(`Connect to monitor ${host}`);
+
+		let monitor = io_client.connect(host, {
+			reconnection: false,
+			query: 'type=game'
+		});
+
+		let game = new Game(this.config, io, monitor);
 	}
 }
 

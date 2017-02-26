@@ -5,6 +5,7 @@ import Entity from 'common/entity';
 import Player from './player';
 import Field from './field';
 import QuadTree from 'simple-quadtree';
+import GameLoop from 'node-gameloop';
 
 let log = new Log('Game');
 let metrics = new Log('Metrics');
@@ -195,12 +196,12 @@ class Game extends Entity {
 		}
 
 		this.ts_interval = process.hrtime();
-		this.tickTimer = setInterval(()=>this.tick(), 1000 / this.config.fps);
+		this.tickTimer = GameLoop.setGameLoop(()=>this.tick(), 1000 / this.config.fps);
 	}
 
 	stop() {
 		if (this.tickTimer) {
-			clearInterval(this.tickTimer);
+			GameLoop.clearGameLoop(this.tickTimer);
 			this.tickTimer = undefined;
 		}
 	}

@@ -25,6 +25,16 @@ class ClientField extends Element {
 				this.point = null;
 			}
 		}, true);
+
+		this.game.addClickListener((gamePoint)=>{
+			log.debug(`Field click at ${gamePoint.x}x${gamePoint.y}!`);
+			let hovered = Utils.posToField(gamePoint, this.width);
+
+			if (hovered == this.id) {
+				let cell = Utils.cellByPos(gamePoint, this.width, this.cellSize);
+				this.game.player.fire(hovered, cell);
+			}
+		}, true);
 	}
 
 	initParams() {
@@ -86,7 +96,7 @@ class ClientField extends Element {
 					canvas.drawRect(screenPos, size, cell === 0 ? '#f7f7ff' : (cell == 1 ? '#fcc' : '#fec'));
 					canvas.drawText(screenPos.add(this.cellSize/2), type, '#000');
 				} else {
-					canvas.drawRect(screenPos, size, cell === 1 ? '#fcc' : (this.hovered ? '#f7f7ff' : false));
+					canvas.drawRect(screenPos, size, cell === 0 ? (this.hovered ? '#f7f7ff' : false) : cell === 4 ? '#f00' : '#fcc');
 				}
 
 				if (this.point && this.cell && this.cell.x == i && this.cell.y == j) {

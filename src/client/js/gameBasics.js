@@ -15,7 +15,7 @@ class GameBasics extends Entity {
 		this.objectsUI = {};
 		this.sectors = [];
 
-		this.debug = false;
+		this.debug = true;
 
 		this.viewpoint = new Vector();
 
@@ -120,6 +120,8 @@ class GameBasics extends Entity {
 		let point = mouse.sub(this.center);
 
 		let pos = this.viewpoint.copy();
+
+		// TODO: fix for multiple players, need to add player's coords shift
 		let gamePoint = pos.add(point);
 
 		return {point, gamePoint};

@@ -1,6 +1,6 @@
-import Log from './common/log';
-import Monitor from './server/monitor';
-import config from './config';
+import Log from 'common/log';
+import Monitor from 'server/monitor';
+import config from 'config';
 
 const log = new Log('monitor');
 

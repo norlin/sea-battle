@@ -1,5 +1,5 @@
-import Log from './common/log';
-import Server from './server/server';
+import Log from 'common/log';
+import Server from 'server/server';
 import config from './config';
 
 const log = new Log('index');

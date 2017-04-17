@@ -120,6 +120,8 @@ class GameBasics extends Entity {
 		let point = mouse.sub(this.center);
 
 		let pos = this.viewpoint.copy();
+
+		// TODO: fix for multiple players, need to add player's coords shift
 		let gamePoint = pos.add(point);
 
 		return {point, gamePoint};
@@ -127,7 +129,6 @@ class GameBasics extends Entity {
 
 	onClick(event) {
 		event.preventDefault();
-
 		let {point, gamePoint} = this.getMousePoint(event);
 
 		this.emit(`click.global`, point);
@@ -186,7 +187,7 @@ class GameBasics extends Entity {
 		let event = inGame ? 'gameClick' : 'click';
 		let isGlobal = global ? '.global' : '';
 
-		this.on(`mousedown${isGlobal}`, handler);
+		this.on(`${event}${isGlobal}`, handler);
 	}
 
 	addMouseListener(handlerDown, handlerUp, inGame, global) {

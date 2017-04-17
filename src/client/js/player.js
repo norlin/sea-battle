@@ -97,11 +97,16 @@ class ClientPlayer extends Element {
 
 		this.game.addMouseListener(false, (point)=>{
 			// on mouseup
-		});
+		}, true);
 	}
 
 	tick() {}
 	draw() {}
+
+	fire(field, cell) {
+		log.debug(`fire at ${field}->${cell.x}x${cell.y}!`);
+		this.socket.emit('fire', {field, cell});
+	}
 }
 
 export default ClientPlayer;

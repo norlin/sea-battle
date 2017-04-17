@@ -56,6 +56,11 @@ class Player extends Element {
 				this.target = this._position.copy();
 			}
 		});
+
+		socket.on('fire', (target)=>{
+			let {field, cell} = target;
+			this.fire(field, cell);
+		});
 	}
 
 	dataToSend(playerId, additional) {
@@ -159,6 +164,23 @@ class Player extends Element {
 		//if (this.game.fields[this.hoveredField]) {
 			this.baseField = this.hoveredField;
 		}
+	}
+
+	fire(fieldId, cell) {
+		log.debug(`fire at ${fieldId}->${cell.x}x${cell.y}!`);
+
+		let field = this.game.fields[fieldId];
+		if (!field) {
+			log.warn(`No field found with id: ${fieldId}!`);
+			return;
+		}
+
+		if (field.player == this.id) {
+			log.debug(`Can't shoot at own field! ${fieldId}`);
+			return;
+		}
+
+		field.fire(cell);
 	}
 }
 

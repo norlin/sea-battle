@@ -25,6 +25,15 @@ class ClientField extends Element {
 				this.point = null;
 			}
 		}, true);
+
+		this.game.addClickListener((gamePoint)=>{
+			let hovered = Utils.posToField(gamePoint, this.width);
+
+			if (hovered == this.id) {
+				let cell = Utils.cellByPos(gamePoint, this.width, this.cellSize);
+				this.game.player.fire(hovered, cell);
+			}
+		}, true);
 	}
 
 	initParams() {
@@ -82,15 +91,32 @@ class ClientField extends Element {
 				let pos = new Vector(x, area.y + j * this.cellSize);
 				let screenPos = this.game.toScreenCoords(pos).add(1);
 
-				if (this.game.debug) {
-					canvas.drawRect(screenPos, size, cell === 0 ? '#f7f7ff' : (cell == 1 ? '#fcc' : '#fec'));
-					canvas.drawText(screenPos.add(this.cellSize/2), type, '#000');
-				} else {
-					canvas.drawRect(screenPos, size, cell === 1 ? '#fcc' : (this.hovered ? '#f7f7ff' : false));
+				let hovered = this.point && this.cell && this.cell.x == i && this.cell.y == j;
+				let color = hovered ? '#ccf' : '#f7f7ff';
+
+				switch (cell) {
+				case 0:
+					break;
+				case 1:
+					color = hovered ? '#fcc' : '#f88';
+					break;
+				case 2:
+					if (this.game.debug) {
+						color = '#fec';
+					}
+					break;
+				case 3:
+					color = '#f00';
+					break;
+				case 4:
+					color = '#00f';
+					break;
 				}
 
-				if (this.point && this.cell && this.cell.x == i && this.cell.y == j) {
-					canvas.drawRect(screenPos, size, cell === 1 ? '#f88' : '#ccf');
+				canvas.drawRect(screenPos, size, color);
+
+				if (this.game.debug) {
+					canvas.drawText(screenPos.add(this.cellSize/2), type, '#000');
 				}
 			});
 		});

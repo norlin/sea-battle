@@ -12,8 +12,10 @@ const SHIPS = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
 const CAN_RIGHT = 1;
 const CAN_DOWN = 2;
 
+const EMPTY_CELL = 0;
 const HAS_SHIP = 1;
 const NEAR_SHIP = 2;
+const HAS_HIT = 3;
 const HAS_MISSED = 4;
 
 class Field extends Element {
@@ -26,8 +28,6 @@ class Field extends Element {
 			x: options.pos.x,
 			y: options.pos.y
 		});
-
-		//log.debug('New field', options.pos, id);
 
 		options.id = id;
 		let {x, y} = Utils.fieldToPos(id, SIZE);
@@ -88,7 +88,7 @@ class Field extends Element {
 		for (let i = 0; i < size; i += 1) {
 			let col = grid[i] = [];
 			for (let j = 0; j < size; j += 1) {
-				col.push({type: 0, cell: 0});
+				col.push({type: 0, cell: EMPTY_CELL});
 			}
 		}
 
@@ -168,7 +168,7 @@ class Field extends Element {
 						this.grid[x][y] = {type: ship, cell: NEAR_SHIP};
 					} else {
 						//log.debug(`Ship '${ship}' placed: ${i}x${j}`);
-						if (this.grid[x][y].cell!==0) {
+						if (this.grid[x][y].cell!==EMPTY_CELL) {
 							throw new Error(`Cell is not available! ${i}x${j}, ${this.grid[x][y].cell}`);
 						}
 						this.grid[x][y] = {type: ship, cell: HAS_SHIP};
@@ -185,10 +185,10 @@ class Field extends Element {
 		let grid = this.grid;
 		let {i, j} = pos;
 
-		let res = 0;
+		let res = EMPTY_CELL;
 
 		let {cell} = grid[i][j];
-		if (cell!==0) {
+		if (cell!==EMPTY_CELL) {
 			return res;
 		}
 
@@ -200,7 +200,7 @@ class Field extends Element {
 				let p = i+k;
 
 				let {cell} = grid[p][j];
-				if (cell!==0) {
+				if (cell!==EMPTY_CELL) {
 					possible = false;
 					break;
 				}
@@ -218,7 +218,7 @@ class Field extends Element {
 				let p = j+k;
 
 				let {cell} = grid[i][p];
-				if (cell!==0) {
+				if (cell!==EMPTY_CELL) {
 					possible = false;
 					break;
 				}
@@ -249,6 +249,24 @@ class Field extends Element {
 			clearTimeout(this.timeout);
 			this.timeout = undefined;
 		}
+	}
+
+	fire(cell) {
+		let hit = this.grid[cell.x][cell.y].cell;
+
+		if (hit === HAS_HIT || hit === HAS_MISSED) {
+			return false;
+		}
+
+		if (hit === HAS_SHIP) {
+			this.grid[cell.x][cell.y].cell = HAS_HIT;
+		} else {
+			this.grid[cell.x][cell.y].cell = HAS_MISSED;
+		}
+
+		this.emptyGrid[cell.x][cell.y].cell = this.grid[cell.x][cell.y].cell;
+
+		return true;
 	}
 }
 

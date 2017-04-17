@@ -180,7 +180,7 @@ class Player extends Element {
 			return;
 		}
 
-		field.grid[cell.x][cell.y].cell = 4;
+		field.fire(cell);
 	}
 }
 

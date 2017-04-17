@@ -15,7 +15,7 @@ class GameBasics extends Entity {
 		this.objectsUI = {};
 		this.sectors = [];
 
-		this.debug = true;
+		this.debug = false;
 
 		this.viewpoint = new Vector();
 
@@ -129,7 +129,6 @@ class GameBasics extends Entity {
 
 	onClick(event) {
 		event.preventDefault();
-
 		let {point, gamePoint} = this.getMousePoint(event);
 
 		this.emit(`click.global`, point);
@@ -188,7 +187,7 @@ class GameBasics extends Entity {
 		let event = inGame ? 'gameClick' : 'click';
 		let isGlobal = global ? '.global' : '';
 
-		this.on(`mousedown${isGlobal}`, handler);
+		this.on(`${event}${isGlobal}`, handler);
 	}
 
 	addMouseListener(handlerDown, handlerUp, inGame, global) {

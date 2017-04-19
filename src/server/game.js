@@ -4,7 +4,6 @@ import Vector from 'common/vector';
 import Entity from 'common/entity';
 import Player from './player';
 import Field from './field';
-import QuadTree from 'simple-quadtree';
 import GameLoop from 'node-gameloop';
 
 let log = new Log('Game');
@@ -26,8 +25,6 @@ class Game extends Entity {
 		let height = this.config.height;
 
 		this.map = this.makeMap();
-
-		this.tree = QuadTree(0, 0, width, height);
 		this.fields = {};
 
 		this.addListeners(io);
@@ -314,7 +311,6 @@ class Game extends Entity {
 		this.metric('interval', this.ts_parse(process.hrtime(this.ts_interval)));
 
 		let ts_tick = process.hrtime();
-		this.tree.clear();
 
 		// move objects
 		this.iterate((object)=>{
@@ -326,16 +322,7 @@ class Game extends Entity {
 			if (object.tick) {
 				object.tick();
 			}
-
-			if (object._position && !object.invisible) {
-				this.tree.put(object.area());
-			}
 		});
-
-		/*// check collisions
-		this.iterate((object)=>{
-
-		});*/
 
 		// update clients
 		this.iterate((object)=>{
@@ -347,26 +334,6 @@ class Game extends Entity {
 		this.metric('tick', this.ts_parse(process.hrtime(ts_tick)));
 
 		this.ts_interval = process.hrtime();
-	}
-
-	getFieldByPos(pos) {
-		let field = this.tree.get({
-			x: pos.x,
-			y: pos.y,
-			w: 1,
-			h: 1,
-			type: 'field'
-		});
-
-		if (!field || !field.length) {
-			return;
-		}
-
-		if (field.length > 1) {
-			throw new Error('Multiple fields by pos');
-		}
-
-		return field[0];
 	}
 
 	getField(pos) {

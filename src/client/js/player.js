@@ -2,7 +2,6 @@ import Log from 'common/log';
 import Vector from 'common/vector';
 import Element from './element';
 import Keys from './keys';
-import Aim from './aim';
 import Target from './target';
 
 let log = new Log('Player');
